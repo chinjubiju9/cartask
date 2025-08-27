@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car World</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-100">
+
+    <h1 class="text-3xl font-bold text-center text-blue-600 mt-10">Car World</h1>
+
+    <div class="flex flex-wrap justify-center mt-10 gap-6">
+
+        <!-- Enter Details -->
+        <div class="bg-white p-6 rounded-lg shadow-lg w-80">
+            <h2 class="text-xl font-semibold text-center text-blue-600 mb-5">Enter Details</h2>
+            <div class="space-y-4">
+                <input type="text" id="carBrand" placeholder="Car Brand"
+                    class="w-full p-2 border border-gray-300 rounded">
+                <input type="text" id="carPrice" placeholder="Price" class="w-full p-2 border border-gray-300 rounded">
+                <input type="text" id="carKey" placeholder="Key" class="w-full p-2 border border-gray-300 rounded">
+                <button onclick="store()"
+                    class="w-full py-2 mt-2 bg-green-500 text-white rounded hover:bg-green-600">Store Records</button>
+                <div id="result"></div>
+            </div>
+        </div>
+
+        <!-- Retrieve Item -->
+        <div class="bg-white p-6 rounded-lg shadow-lg w-80">
+            <h2 class="text-xl font-semibold text-center text-blue-600 mb-5">Enter Key to Retrieve Item</h2>
+            <div class="space-y-4">
+                <input type="text" id="searchKey" placeholder="Key" class="w-full p-2 border border-gray-300 rounded">
+                <button onclick="retrive()"
+                    class="w-full py-2 mt-2 border border-blue-500 text-blue-500 rounded hover:bg-blue-50">Retrieve
+                    Records</button>
+                <div id="result1" class="mt-3"></div>
+            </div>
+        </div>
+
+        <!-- Delete Item -->
+        <div class="bg-white p-6 rounded-lg shadow-lg w-80">
+            <h2 class="text-xl font-semibold text-center text-blue-600 mb-5">Enter Key to Delete Item</h2>
+            <div class="space-y-4">
+                <input type="text" id="removeKey" placeholder="Key" class="w-full p-2 border border-gray-300 rounded">
+                <button onclick="removeItem()" class="w-full py-2 mt-2 border border-red-500 text-red-500 rounded hover:bg-red-50">Remove
+                    Records</button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Clear All Records -->
+    <div class="flex justify-center mt-10">
+        <button onclick="clearAll()" class="w-1/2 py-3 border-2 border-gray-400 rounded hover:bg-gray-100">Clear All Records</button>
+        <div id="result2"></div>
+    </div>
+
+
+    <script>
+        const result = document.getElementById("result");
+        function store() {
+            const carDetails = {
+                brand: carBrand.value,
+                price: carPrice.value,
+                key: carKey.value
+            };
+
+            // Check if key already exists in localStorage
+            if (localStorage.getItem(carDetails.key)) {
+                alert(`Key "${carDetails.key}" already exists!`);
+            } else {
+                // Store the new carDetails with its key
+                localStorage.setItem(carDetails.key, JSON.stringify(carDetails));
+                alert("items added successfully")
+
+                result.innerHTML = `
+        <div class="card" style="width: 18rem;">
+            <div class="card-header">Car Details</div>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">Brand: ${carDetails.brand}</li>
+                <li class="list-group-item">Price: ${carDetails.price}</li>
+                <li class="list-group-item">Key: ${carDetails.key}</li>
+            </ul>
+        </div>`;
+            }
+        }
+
+
+
+
+        function retrive() {
+            let key = searchKey.value; // input field for key
+            if (key in localStorage) {
+                let item = JSON.parse(localStorage.getItem(key));
+
+                document.getElementById("result1").innerHTML = `
+          <div class="card">
+            <div class="card-header">Stored Details</div>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item"><b>Brand:</b> ${item.brand}</li>
+              <li class="list-group-item"><b>Price:</b> ${item.price}</li>
+              <li class="list-group-item"><b>Key:</b> ${item.key}</li>
+            </ul>
+          </div>
+        `;
+            } else {
+                alert("Record not found!");
+                document.getElementById("result1").innerHTML = "";
+            }
+
+
+
+        }
+
+
+
+        function removeItem() {
+    let key = removeKey.value;
+
+    if (key === "") {
+        alert("Please enter a key");
+        return;
+    }
+
+    if (localStorage.getItem(key)) {
+        localStorage.removeItem(key);
+        alert("Record removed successfully!");
+    } else {
+        alert("No record found with that key");
+    }
+}
+
+function clearAll() {
+    if (localStorage.length === 0) {
+        alert("No records found.");
+        return;
+    }
+
+    if (confirm("⚠️ Are you sure you want to delete ALL records?")) {
+        localStorage.clear();
+        document.getElementById("result2").innerHTML = "<p style='color:red;'>All records deleted.</p>";
+        alert("✅ All records cleared successfully!");
+    }
+}
+
+
+
+
+
+    </script>
+
+</body>
+
+</html>
